@@ -32,6 +32,17 @@ public class LDAPUtil {
         return new LDAPConnection(LDAP_HOST, LDAP_PORT, LDAP_BIND_DN, LDAP_PASSWORD);
     }
 
+    public static void closeConnection(LDAPConnection connection) {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.close();
+        } catch (Exception e) {
+
+        }
+    }
+
     /**
      * 用户登陆
      *
@@ -43,10 +54,13 @@ public class LDAPUtil {
         if (StringUtils.isEmpty(dn)) {
             throw new Exception("不存在的用户!");
         }
+        LDAPConnection connection = null;
         try {
-            new LDAPConnection(LDAP_HOST, LDAP_PORT, dn, password);
+           connection = new LDAPConnection(LDAP_HOST, LDAP_PORT, dn, password);
         } catch (Exception e) {
             throw new Exception("账号或者密码不正确!");
+        } finally {
+            closeConnection(connection);
         }
         return findUser(userName);
     }
@@ -154,7 +168,10 @@ public class LDAPUtil {
     private static SearchResult fetchAll(String... attributes) throws Exception {
         String baseDN = "";
         String filter = "objectClass=user";
-        return getConnection().search(baseDN, SearchScope.SUB, filter, attributes);
+        LDAPConnection connection = getConnection();
+        SearchResult result = connection.search(baseDN, SearchScope.SUB, filter, attributes);
+        closeConnection(connection);
+        return result;
     }
 
     /**

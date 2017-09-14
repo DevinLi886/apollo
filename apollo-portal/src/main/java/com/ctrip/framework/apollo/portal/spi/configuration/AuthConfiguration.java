@@ -1,5 +1,8 @@
 package com.ctrip.framework.apollo.portal.spi.configuration;
 
+import com.ctrip.framework.apollo.portal.spi.ldap.LdapUserService;
+import com.ctrip.framework.apollo.portal.spi.ldap.ThreadLocalUserInfoHolder;
+import com.ctrip.framework.apollo.portal.spi.ldap.UserLogoutHandler;
 import com.google.common.collect.Maps;
 
 import com.ctrip.framework.apollo.common.condition.ConditionalOnMissingProfile;
@@ -254,6 +257,40 @@ public class AuthConfiguration {
       http.formLogin().loginPage("/signin").permitAll().failureUrl("/signin?#/error").and().httpBasic();
       http.logout().invalidateHttpSession(true).clearAuthentication(true).logoutSuccessUrl("/signin?#/logout");
       http.exceptionHandling().authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/signin"));
+    }
+
+  }
+
+
+  /**
+   * spring.profiles.active = ldap
+   */
+  @Configuration
+  @Profile("ldap")
+  static class LdapAuthAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(SsoHeartbeatHandler.class)
+    public SsoHeartbeatHandler defaultSsoHeartbeatHandler() {
+      return new DefaultSsoHeartbeatHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UserInfoHolder.class)
+    public ThreadLocalUserInfoHolder notCtripUserInfoHolder() {
+      return new ThreadLocalUserInfoHolder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(LogoutHandler.class)
+    public UserLogoutHandler logoutHandler() {
+      return new UserLogoutHandler();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(UserService.class)
+    public UserService defaultUserService() {
+      return new LdapUserService();
     }
 
   }
