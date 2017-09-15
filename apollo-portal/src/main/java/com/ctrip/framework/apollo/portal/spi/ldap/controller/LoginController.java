@@ -1,7 +1,7 @@
 package com.ctrip.framework.apollo.portal.spi.ldap.controller;
 
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
-import com.ctrip.framework.apollo.portal.spi.ldap.LDAPUtil;
+import com.ctrip.framework.apollo.portal.spi.ldap.LDAPConnector;
 import com.google.gson.JsonObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,14 +16,13 @@ import javax.servlet.http.HttpServletRequest;
 public class LoginController {
 
 
-
-    @RequestMapping(value = "/doLogin", method = RequestMethod.POST )
+    @RequestMapping(value = "/doLogin", method = RequestMethod.POST)
     @ResponseBody
     public JsonObject login(@RequestParam String userName, @RequestParam String password,
-                         HttpServletRequest request) {
+                            HttpServletRequest request) {
         JsonObject message = new JsonObject();
         try {
-            UserInfo currentUser = LDAPUtil.login(userName, password);
+            UserInfo currentUser = LDAPConnector.login(userName, password);
             request.getSession().setAttribute("currentUser", currentUser);
             message.addProperty("code", 200);
             message.addProperty("message", "success");

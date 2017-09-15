@@ -2,7 +2,6 @@ package com.ctrip.framework.apollo.portal.spi.ldap.filters;
 
 import com.ctrip.framework.apollo.portal.entity.bo.UserInfo;
 import com.ctrip.framework.apollo.portal.spi.ldap.ThreadLocalUserInfoHolder;
-import com.ctrip.framework.apollo.portal.spi.ldap.XxdUserInfoHolder;
 import com.google.common.base.Strings;
 
 import javax.servlet.*;

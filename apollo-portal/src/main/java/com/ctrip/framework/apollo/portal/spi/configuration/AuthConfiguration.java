@@ -299,7 +299,7 @@ public class AuthConfiguration {
    * default profile
    */
   @Configuration
-  @ConditionalOnMissingProfile({"ctrip", "auth"})
+  @ConditionalOnMissingProfile({"ctrip", "auth" ,"ldap"})
   static class DefaultAuthAutoConfiguration {
 
     @Bean
